@@ -213,9 +213,9 @@ docker service ls
 ```
 ID                  NAME                     MODE                REPLICAS            IMAGE                            PORTS
 yi1fx7alrdxq        proxy_traefik            replicated          1/1                 traefik:v2.1                     *:80->80/tcp, *:443->443/tcp, *:8080->8080/tcp
-qgs6smalryy1        sample_company           replicated          2/2                 tracing-company:latest   
-h0eyhi9qr03j        sample_employee          replicated          2/2                 tracing-employee:latest   
-3knv81wl6auh        sample_gateway-service   replicated          1/1                 tracing-gateway:latest    
+qgs6smalryy1        sample_company           replicated          3/3                 tracing-company:latest   
+h0eyhi9qr03j        sample_employee          replicated          3/3                 tracing-employee:latest   
+3knv81wl6auh        sample_gateway           replicated          1/1                 tracing-gateway:latest    
 5tt2z8hvp0y6        tracing_jaeger           global              1/1                 jaegertracing/all-in-one:1.15    *:5778->5778/tcp, *:9411->9411/tcp, *:14268->14268/tcp, *:16686->16686/tcp, *:5775->5775/udp, *:6831-6832->6831-6832/udp
 ```
 
