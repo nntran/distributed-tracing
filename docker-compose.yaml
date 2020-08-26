@@ -17,6 +17,11 @@ services:
       - 9411:9411
     networks:
       - private
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "5"
+        max-size: "10m"
 
   # API Gateway service
   gateway:
@@ -49,6 +54,11 @@ services:
       - private
     depends_on:
       - jaeger
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "5"
+        max-size: "10m"
 
   # Employee service
   employee:
@@ -81,6 +91,11 @@ services:
       - private
     depends_on:
       - jaeger
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "5"
+        max-size: "10m"
 
   # Company service
   company:
@@ -113,6 +128,11 @@ services:
       - private
     depends_on:
       - jaeger
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "5"
+        max-size: "10m"
 
 networks:
   private:
