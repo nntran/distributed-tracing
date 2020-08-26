@@ -197,9 +197,9 @@ docker stack deploy -c ./deployment/docker-stack.yaml sample
 ```
 
 ```
-Creating service sample_employee-service
-Creating service sample_gateway-service
-Creating service sample_company-service
+Creating service sample_employee
+Creating service sample_gateway
+Creating service sample_company
 ```
 
 ### Step 5 : Véfifier l'état des services
