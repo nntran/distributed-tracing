@@ -1,0 +1,40 @@
+Accor
+Air
+Alstom
+Arcelor-Mittal
+AXA
+BNP Paribas
+Bouygues
+Cap Gemini
+Carrefour
+Crédit agricole
+Danone
+EADS
+EDF
+Essilor
+France Télécom
+GDF Suez
+Gemalto
+L'Oréal
+Lafarge
+Legrand
+LVMH
+Michelin
+Pernod Ricard
+Kering (ex PPR)
+Publicis
+Renault
+Safran
+Saint-Gobain
+Sanofi
+Schneider Electric
+Société Générale
+Solvay
+STMicroelectronics
+Technip	Ingénierie
+Total
+Unibail-Rodamco
+Vallourec
+Véolia
+Vinci
+Vivendi

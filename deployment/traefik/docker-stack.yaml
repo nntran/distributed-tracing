@@ -1,0 +1,47 @@
+# Set the version of docker compose to use
+version: "3.7"
+
+services:
+  traefik:
+    # The official v2.0 Traefik docker image
+    # https://hub.docker.com/_/traefik
+    image: traefik:v2.3
+    configs:
+      - source: traefik-config
+        target: /etc/traefik/traefik.yml
+    ports:
+      # The HTTP port
+      - "80:80"
+      # The HTTPS port
+      - "443:443"
+      # The Web UI (enabled by --api.insecure=true)
+      - "8080:8080"
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - public
+    deploy:
+      mode: replicated
+      replicas: 1
+      labels:
+        # v2.x
+        - traefik.enable=true
+        - traefik.http.routers.traefik.rule=Host(`traefik.${DOMAIN:-docker.lan}`)
+        - traefik.http.services.traefik.loadbalancer.server.port=8080
+      placement:
+        constraints:
+          - node.role == manager
+      restart_policy:
+        condition: on-failure
+        max_attempts: 5
+
+configs:
+  traefik-config:
+    file: ./config/traefik.yaml
+
+networks:
+  public:
+    driver: overlay
+    name: traefik-net
+    # external: true

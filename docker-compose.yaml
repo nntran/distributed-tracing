@@ -1,0 +1,120 @@
+version: "3.7"
+
+services:
+  # Jaeger server
+  jaeger:
+    container_name: jaeger
+    image: jaegertracing/all-in-one:1.17
+    # command: --log-level=debug
+    command: --collector.zipkin.http-port=9411 --log-level=debug
+    ports:
+      - 5775:5775/udp
+      - 6831:6831/udp
+      - 6832:6832/udp
+      - 16686:16686
+      - 5778:5778
+      - 14268:14268
+      - 9411:9411
+    networks:
+      - private
+
+  # API Gateway service
+  gateway:
+    container_name: gateway
+    image: ${REPOSITORY:-ntdtfr}/tracing-gateway:${IMAGE_VERSION:-latest}
+    build:
+      context: ./services/gateway
+      # cache_from:
+      #   - alpine:latest
+      args:
+        # BUILD_IMAGE: maven:3.6-jdk-8-alpine
+        BUILD_IMAGE: maven:3.6.3-jdk-11-slim
+        # RUNTIME_IMAGE: openjdk:8-jre-alpine
+        RUNTIME_IMAGE: openjdk:11-jre-stretch
+        IMAGE_VERSION: ${IMAGE_VERSION:-1.0.0}
+        SONAR_ENABLED: ${SONAR_ENABLE:-false}
+        SONAR_URL: ${SONAR_URL:-http://sonar:9000}
+        # SONAR_ORGANIZATION:
+        # SONAR_USERNAME:
+        # SONAR_PASSWORD:
+        # SONAR_BRANCH:
+    environment:
+      # Enable/disable Jaeger
+      JAEGER_ENABLED: "true"
+      JAEGER_UDP_HOST: "jaeger"
+      JAEGER_UDP_PORT: 6831
+    ports:
+      - 8090:8090
+    networks:
+      - private
+    depends_on:
+      - jaeger
+
+  # Employee service
+  employee:
+    container_name: employee
+    image: ${REPOSITORY:-ntdtfr}/tracing-employee:${IMAGE_VERSION:-latest}
+    build:
+      context: ./services/employee
+      # cache_from:
+      #   - alpine:latest
+      args:
+        # BUILD_IMAGE: maven:3.6-jdk-8-alpine
+        BUILD_IMAGE: maven:3.6.3-jdk-11-slim
+        # RUNTIME_IMAGE: openjdk:8-jre-alpine
+        RUNTIME_IMAGE: openjdk:11-jre-stretch
+        IMAGE_VERSION: ${IMAGE_VERSION:-1.0.0}
+        SONAR_ENABLED: ${SONAR_ENABLE:-false}
+        SONAR_URL: ${SONAR_URL:-http://sonar:9000}
+        # SONAR_ORGANIZATION:
+        # SONAR_USERNAME:
+        # SONAR_PASSWORD:
+        # SONAR_BRANCH:
+    environment:
+      # Enable/disable Jaeger
+      JAEGER_ENABLED: "true"
+      JAEGER_UDP_HOST: "jaeger"
+      JAEGER_UDP_PORT: 6831
+    ports:
+      - 8091:8090
+    networks:
+      - private
+    depends_on:
+      - jaeger
+
+  # Company service
+  company:
+    container_name: company
+    image: ${REPOSITORY:-ntdtfr}/tracing-company:${IMAGE_VERSION:-latest}
+    build:
+      context: ./services/company
+      # cache_from:
+      #   - alpine:latest
+      args:
+        # BUILD_IMAGE: maven:3.6-jdk-8-alpine
+        BUILD_IMAGE: maven:3.6.3-jdk-11-slim
+        # RUNTIME_IMAGE: openjdk:8-jre-alpine
+        RUNTIME_IMAGE: openjdk:11-jre-stretch
+        IMAGE_VERSION: ${IMAGE_VERSION:-1.0.0}
+        SONAR_ENABLED: ${SONAR_ENABLE:-false}
+        SONAR_URL: ${SONAR_URL:-http://sonar:9000}
+        # SONAR_ORGANIZATION:
+        # SONAR_USERNAME: admin
+        # SONAR_PASSWORD: admin
+        # SONAR_BRANCH:
+    environment:
+      # Enable/disable Jaeger
+      JAEGER_ENABLED: "true"
+      JAEGER_UDP_HOST: "jaeger"
+      JAEGER_UDP_PORT: 6831
+    ports:
+      - 8092:8090
+    networks:
+      - private
+    depends_on:
+      - jaeger
+
+networks:
+  private:
+    name: private
+    driver: bridge # for local (use overlay for swarm multi nodes)

@@ -1,0 +1,44 @@
+# https://www.jaegertracing.io/docs/1.14/getting-started/
+
+version: "3.7"
+services:
+  jaeger:
+    image: jaegertracing/all-in-one:1.15
+    command: --collector.zipkin.http-port=9411
+    ports:
+      - 5775:5775/udp
+      - 6831:6831/udp
+      - 6832:6832/udp
+      - 5778:5778
+      - 16686:16686
+      - 14268:14268
+      - 9411:9411
+    networks:
+      - public
+    environment:
+      - COLLECTOR_ZIPKIN_HTTP_PORT=9411
+    deploy:
+      mode: global
+      labels:
+        # Traefik v2.x
+        # https://docs.traefik.io/providers/docker/
+        - traefik.enable=true
+        - traefik.http.routers.jaeger.rule=Host(`jaeger.${DOMAIN:-docker.lan}`)
+        - traefik.http.services.jaeger.loadbalancer.server.port=16686
+        # - traefik.http.middlewares.latency-check.circuitbreaker.expression=LatencyAtQuantileMS(50.0) > 100
+      placement:
+        constraints:
+          - node.role == manager
+      restart_policy:
+        condition: on-failure
+        max_attempts: 5
+      resources:
+        limits:
+          memory: 200M
+      #   reservations:
+      #     cpus: "0.1"
+      #     memory: 100M
+networks:
+  public:
+    name: traefik-net
+    external: true

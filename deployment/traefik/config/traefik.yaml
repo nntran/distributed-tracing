@@ -1,0 +1,95 @@
+## traefik.yml
+
+entryPoints:
+  http:
+    address: ":80"
+
+  https:
+    address: ":443"
+
+providers:
+  docker:
+    # swarm classic (1.12-)
+    # endpoint = "tcp://127.0.0.1:2375"
+    # docker swarm mode (1.12+)
+    #endpoint: "tcp://127.0.0.1:2377"
+    endpoint: "unix:///var/run/docker.sock"
+    swarmMode: true
+
+    # Defines the polling interval (in seconds) in Swarm Mode.
+    swarmModeRefreshSeconds: "30s"
+
+    # Traefik routes requests to the IP/Port of the matching container.
+    # When setting useBindPortIP=true, you tell Traefik to use the IP/Port attached to the container's binding instead of its inner network IP/Port.
+    useBindPortIP: false
+
+    # Expose containers by default through Traefik.
+    # If set to false, containers that don't have a traefik.enable=true label will be ignored from the resulting routing configuration.
+    exposedByDefault: true
+
+    # Defines a default docker network to use for connections to all containers.
+    # This option can be overridden on a container basis with the traefik.docker.network label
+    # CLI : --providers.docker.network=traefik-net
+    network: traefik-net
+
+# API and dashboard configuration
+api:
+  insecure: true
+  # You can now access the dashboard on the port 8080 of the Traefik instance,
+  # at the following URL: http://<Traefik IP>:8080/dashboard/ (trailing slash is mandatory).
+  dashboard: true
+  #
+
+# Tracing
+tracing:
+  servicename: traefik
+  # https://docs.traefik.io/observability/tracing/zipkin/
+  # zipkin: # --tracing.zipkin=true
+  #   # Zipkin HTTP endpoint used to send data
+  #   httpEndpoint: http://zipkin:9411/api/v2/spans
+  # # Use Zipkin SameSpan RPC style traces (default = false)
+  # sameSpan: true
+  # # Use Zipkin 128 bit trace IDs (deffault = true)
+  # id128Bit: false
+  # # The rate between 0.0 and 1.0 of requests to trace (default = 0.1)
+  # sampleRate: 0.2
+
+  # https://docs.traefik.io/observability/tracing/jaeger/
+  jaeger: # --tracing.jaeger=true
+    samplingParam: 1
+    samplingServerURL: "http://jaeger:5778/sampling"
+    samplingType: const
+    localAgentHostPort: "jaeger:6831"
+
+# metrics:
+#   # https://docs.traefik.io/observability/metrics/prometheus/
+#   # CLI : --metrics.prometheus=true
+#   prometheus:
+#     # Enable metrics on entry points.
+#     addEntryPointsLabels: true
+
+#     # Enable metrics on services.
+#     addServicesLabels: true
+
+#     # Buckets for latency metrics (deffault: 0.100000, 0.300000, 1.200000, 5.000000")
+#     buckets:
+#       - 0.1
+#       - 0.3
+#       - 1.2
+#       - 5.0
+
+# https://docs.traefik.io/observability/logs/
+log:
+  level: INFO
+#   # filePath: "/path/to/traefik.log"
+
+accessLog: {}
+# # Configuring Multiple Filters
+# #   filePath: "/path/to/access.log"
+# #   format: json
+# #   filters:
+# #     statusCodes:
+# #       - "200"
+# #       - "300-302"
+# #     retryAttempts: true
+# #     minDuration: "10ms"

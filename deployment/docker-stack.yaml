@@ -1,0 +1,79 @@
+# Set the version of docker compose to use
+version: "3.7"
+
+services:
+  gateway:
+    image: ${REPOSITORY:-ntdtfr}/tracing-gateway
+    environment:
+      # Enable/disable Jaeger
+      JAEGER_ENABLED: "true"
+      JAEGER_UDP_HOST: "jaeger"
+      JAEGER_UDP_PORT: 6831
+    networks:
+      - public
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      restart_policy:
+        condition: on-failure
+      labels:
+        # v2.x
+        - traefik.enable=true
+        - traefik.http.routers.gateway.rule=Host(`api.${DOMAIN:-docker.lan}`)
+        - traefik.http.services.gateway-service.loadbalancer.server.port=8090
+
+  company:
+    image: ${REPOSITORY:-ntdtfr}/tracing-company
+    environment:
+      # Enable/disable Jaeger
+      JAEGER_ENABLED: "true"
+      JAEGER_UDP_HOST: "jaeger"
+      JAEGER_UDP_PORT: 6831
+    networks:
+      - public
+    deploy:
+      replicas: 3
+      placement:
+        constraints:
+          - node.role == worker
+      update_config:
+        parallelism: 2
+      restart_policy:
+        condition: on-failure
+      labels:
+        # v2.x
+        - traefik.enable=true
+        - traefik.http.routers.company.rule=Host(`company.${DOMAIN:-docker.lan}`)
+        - traefik.http.services.company-service.loadbalancer.server.port=8090
+
+  employee:
+    image: ${REPOSITORY:-ntdtfr}/tracing-employee
+    environment:
+      # Enable/disable Jaeger
+      JAEGER_ENABLED: "true"
+      JAEGER_UDP_HOST: "jaeger"
+      JAEGER_UDP_PORT: 6831
+    networks:
+      - public
+    deploy:
+      replicas: 3
+      placement:
+        constraints:
+          - node.role == worker
+      update_config:
+        parallelism: 2
+      restart_policy:
+        condition: on-failure
+      labels:
+        # v2.x
+        - traefik.enable=true
+        - traefik.http.routers.employee.rule=Host(`employee.${DOMAIN:-docker.lan}`)
+        - traefik.http.services.employee-service.loadbalancer.server.port=8090
+
+# Docker networks
+networks:
+  public:
+    name: traefik-net
+    external: true

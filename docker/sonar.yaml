@@ -1,0 +1,14 @@
+version: "3.7"
+services:
+  sonar:
+    image: sonarqube:7.9.1-community
+    ports:
+      - 9091:9000
+      - 9092:9092
+#     networks:
+#       - public
+
+# networks:
+#   public:
+#     name: traefik-net
+#     external: true
