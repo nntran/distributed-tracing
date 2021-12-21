@@ -1,8 +1,8 @@
-# PoC sur Opentracing, Jaeger, Spring et Docker
+# Démo Opentracing, Jaeger, Spring et Docker
 
 ## Objectifs
 
-Ce `Proof of concept` (PoC) a plusieurs objectifs :
+Ce projet a plusieurs objectifs :
 * Valider le fonctionnement du framework Opentracing
 * Intégrer Opentracing dans les projets Java et SpringBoot
 * Utiliser Jaeger pour afficher et suivre les traces des appels RESTful
